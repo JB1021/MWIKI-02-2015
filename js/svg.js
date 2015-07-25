@@ -21,12 +21,13 @@ var svg = d3.select("#map svg")
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
-    .call(zoom);
+    .call(zoom)
+    .on("click", mouseClick);
 
 var container = svg.append("g");
 var map = container.append("image").attr("xlink:href","img/worldmap.svg")
     .attr("width", 1042)
-    .attr("height", 681)
+    .attr("height", 681);
 var background = svg.append("rect")
     .attr("width", width)
     .attr("height", height)
@@ -43,4 +44,19 @@ function zoomed() {
 
     zoom.translate([tx, ty]);
     container.attr("transform", "translate(" + [tx,ty] + ")scale(" + scale + ")");
+}
+
+function mouseClick(d, i) {
+    var position = d3.mouse(svg.node()); //<-C
+    var translate = zoom.translate();
+    var scale = zoom.scale();
+
+    console.log((translate[0] - position[0])/scale);
+    console.log((translate[1] - position[1])/scale);
+        
+    var map = container.append("image").attr("xlink:href","img/marker.png")
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("x", -(translate[0] - position[0])/scale)
+    .attr("y", -(translate[1] - position[1])/scale);
 }
