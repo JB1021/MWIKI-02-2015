@@ -1,4 +1,4 @@
-var margin = {top: 0, right: 0, bottom: 0, left: 0};
+var margin = {top: 30, right: 30, bottom: 30, left: 30};
 var width = 1042 - margin.left - margin.right,
     height = 681- margin.top - margin.bottom;
 
@@ -26,8 +26,8 @@ var svg = d3.select("#map svg")
 
 var container = svg.append("g");
 var map = container.append("image").attr("xlink:href","img/worldmap.svg")
-    .attr("width", 1042)
-    .attr("height", 681);
+    .attr("width", width)
+    .attr("height", height);
 var background = svg.append("rect")
     .attr("width", width)
     .attr("height", height)
@@ -47,7 +47,7 @@ function zoomed() {
 }
 
 function mouseClick(d, i) {
-    var position = d3.mouse(svg.node()); //<-C
+    var position = d3.mouse(svg.node());
     var translate = zoom.translate();
     var scale = zoom.scale();
 
@@ -57,6 +57,6 @@ function mouseClick(d, i) {
     var map = container.append("image").attr("xlink:href","img/marker.png")
     .attr("width", 10)
     .attr("height", 10)
-    .attr("x", -(translate[0] - position[0])/scale)
-    .attr("y", -(translate[1] - position[1])/scale);
+    .attr("x", -(translate[0] - position[0])/scale-5)
+    .attr("y", -(translate[1] - position[1])/scale-10);
 }
