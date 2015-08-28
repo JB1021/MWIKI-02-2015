@@ -8,8 +8,13 @@
 	<body>
 		<header id="nav">
 			<div class="logo">지도위키</div>
-			<div class="btn btn-newmap" name="modal" href="#newmap">new map</div>
-			<div class="btn btn-join" name="modal" href="#join">회원가입</div>
+				<div class="btn btn-newmap" name="modal" href="#newmap">new map</div>
+			<% if (req.session.email){ %> 
+				<div class="btn btn-sign-up" name="modal" href="#sign-up">sign up</div>
+        	<% }  else { %>
+				<div class="btn btn-sign-up" name="modal" href="#sign-up">sign up</div>
+        		<div class="btn btn-sign-in" name="modal" href="#sign-in">sign in</div>
+        	<% } %>
 		</header>
 		<section id="map">
 			<svg></svg>
@@ -23,7 +28,13 @@
 				<input class="submit" type="submit" value="Submit">
 				<div class="close"></div>       
    			</div>
-		    <div id="join" class="window modal">
+		    <div id="sign-up" class="window modal">
+				<input class="email" type="text" value="email"/>
+				<input class="password" type="text" value="password"/>
+				<input class="submit" type="submit" value="Submit">       
+				<div class="close"></div>       
+   			</div>
+   			<div id="sign-in" class="window modal">
 				<input class="email" type="text" value="email"/>
 				<input class="password" type="text" value="password"/>
 				<input class="submit" type="submit" value="Submit">       

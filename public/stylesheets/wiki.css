@@ -66,11 +66,15 @@ table {
 	border: dashed grey 2px;
 }
 #nav .btn-newmap{
-	right: 200px;
+	right: 300px;
 }
-#nav .btn-join{
+#nav .btn-sign-in{
 	right: 100px;
 }
+#nav .btn-sign-up{
+	right: 200px;
+}
+
 #nav .year-input {
 	width: 80px;
 }
@@ -100,28 +104,28 @@ table {
 }
 
 #modals .mask {
-  position:absolute;
-  left:0;
-  top:0;
-  z-index:9000;
-  background-color:#000;
-  display:none;
+	position:absolute;
+  	left:0;
+  	top:0;
+  	z-index:9000;
+  	background-color:#000;
+  	display:none;
 }
 #modals .window {
-  position:fixed;
-  left:0;
-  top:0;
-  width:440px;
-  height:200px;
-  display:none;
-  z-index:9999;
-  padding:20px;
+  	position:fixed;
+  	left:0;
+  	top:0;
+  	width:440px;
+  	height:200px;
+  	display:none;
+  	z-index:9999;
+  	padding:20px;
 }
 #modals .modal{
-  width:375px; 
-  height:203px;
-  padding:10px;
-  background-color:#ffffff;
+  	width:375px; 
+ 	height:203px;
+  	padding:10px;
+	background-color:#ffffff;
 }
 #modals .close{
 	width: 20px;

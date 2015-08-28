@@ -24,19 +24,30 @@ var WIKI = WIKI || {};
 WIKI.methods = WIKI.methods || {};
 WIKI.init = function() {
 	var btnNewmap = $("#newmap .submit");
-    var btnJoin = $('#join .submit');
+  var btnSignIn = $('#sign-in .submit');
+  var btnSignUp = $('#sign-up .submit');
 	var timenav = $("#timenav");
-    console.log(btnJoin);
 
-    btnJoin.on("click",function(){
-        var email = $("#join .email").val();
-        var password = $("#join .password").val();
+  btnSignUp.on("click",function(){
+      var email = $("#sign-up .email").val();
+      var password = $("#sign-up .password").val();
 
-        $.post("http://127.0.0.1:3000/user", {email : email, password : password}, function(){
-            $('#modals .mask, .window').hide();
-        })
-    });
+      $.post("http://localhost:3000/user", {email : email, password : password}, function(){
+          $('#modals .mask, .window').hide();
+      })
+  });
 	
+  btnSignIn.on("click",function(){
+      var email = $("#sign-in .email").val();
+      var password = $("#sign-in .password").val();
+
+      $.get("http://localhost:3000/user", {email : email, password : password}, function(result){
+          console.log(result.email);
+          console.log(result);
+          $('#modals .mask, .window').hide();
+      })
+  });
+
 	btnNewmap.on("click", function(){
 		var year = $("#newmap .year").val();
 		var flag = new WIKI.flag(year);
@@ -75,8 +86,8 @@ WIKI.init = function() {
  		var modal = $('#modals .window');
         var windowHeight = $(window).height();
         var windowWidth = $(window).width();
-        modal.css('top',  windowHeight/2 - box.height()/2);
-        modal.css('left', windowWidth/2 - box.width()/2);
+        modal.css('top',  windowHeight/2 - modal.height()/2);
+        modal.css('left', windowWidth/2 - modal.width()/2);
 	});
 
 };
