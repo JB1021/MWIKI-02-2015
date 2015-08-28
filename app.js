@@ -4,6 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var MongoClient = require('mongodb').MongoClient;
+var url = 'mongodb://125.209.195.202:27017/test';
 
 var routes = require('./routes/index');
 var users = require('./routes/users');

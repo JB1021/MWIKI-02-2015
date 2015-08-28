@@ -1,19 +1,48 @@
+jQuery.each( [ "put", "delete" ], function( i, method ) {
+  jQuery[ method ] = function( url, data, callback, type ) {
+    if ( jQuery.isFunction( data ) ) {
+      type = type || callback;
+      callback = data;
+      data = undefined;
+    }
+
+    return jQuery.ajax({
+      url: url,
+      type: method,
+      dataType: type,
+      data: data,
+      success: callback
+    });
+  };
+});
+
 document.addEventListener("DOMContentLoaded", function(e) {
 	WIKI.init();
 });
 
 var WIKI = WIKI || {};
-
+WIKI.methods = WIKI.methods || {};
 WIKI.init = function() {
 	var btnNewmap = $("#newmap .submit");
+    var btnJoin = $('#join .submit');
 	var timenav = $("#timenav");
+    console.log(btnJoin);
+
+    btnJoin.on("click",function(){
+        var email = $("#join .email").val();
+        var password = $("#join .password").val();
+
+        $.post("http://127.0.0.1:3000/user", {email : email, password : password}, function(){
+            $('#modals .mask, .window').hide();
+        })
+    });
 	
 	btnNewmap.on("click", function(){
 		var year = $("#newmap .year").val();
 		var flag = new WIKI.flag(year);
 		timenav.prepend(flag.element);
 		$('#modals .mask, .window').hide();
-	})
+	});
 
  	$('div[name=modal]').click(function(e) {
         var modalId = $(this).attr('href');   
@@ -66,7 +95,7 @@ WIKI.flag = function(year) {
 };
 WIKI.flag.prototype.movePointer = function(left){
 	this.flagPointer.css('left',left);	
-}
+};
 
 Templates = {}; 
 Templates.mapFlag = [
