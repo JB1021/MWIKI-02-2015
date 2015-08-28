@@ -1,23 +1,40 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<link rel="stylesheet" type="text/css" href="css/map.css" />
 		<title>지도 위키</title>
+		<link rel="stylesheet" type="text/css" href="css/map.css" />
 		<meta charset="UTF-8">
 	</head>
 	<body>
-	<header id="nav">
-			<h1>지도위키</h1>
-	</header>
-	<section id="map">
-		<svg></svg>
-	</section>
-	<section id="timenav">
-		<svg></svg>
-	</section> 
-		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<header id="nav">
+			<div class="logo">지도위키</div>
+			<div class="btn btn-newmap" name="modal" href="#newmap">new map</div>
+			<div class="btn btn-join" name="modal" href="#join">회원가입</div>
+		</header>
+		<section id="map">
+			<svg></svg>
+		</section>
+		<ul id="timenav">
+			<div class="bar flag-pointer"></div>
+		</ul>
+		<section id="modals">
+		    <div id="newmap" class="window modal">
+				<input class="year" type="text"/>
+				<input class="submit" type="submit" value="Submit">
+				<div class="close"></div>       
+   			</div>
+		    <div id="join" class="window modal">
+				<input class="year-input" type="text"/>
+				<input class="newmap-submit" type="submit" value="Submit">       
+				<div class="close"></div>       
+   			</div>
+   		    <div class="mask"></div>
+		</section>		
+		<script type="text/javascript" src="js/jquery-1.11.3.min.js"/></script>
+		<script type="text/javascript" src="js/handlebars-v3.0.3.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 		<script type="text/javascript" src="js/map.js"></script>
-		<script type="text/javascript" src="js/timenav.js"></script>
+		<script type="text/javascript" src="js/wiki.js"></script>
 	</body>
 </html> 
+
