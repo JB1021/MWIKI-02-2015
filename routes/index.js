@@ -4,7 +4,12 @@ var app = express();
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://125.209.195.202:27017/test';
 
-router.get('/user', function(req, res){
+/* GET home page. */
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Express',  req: req });
+});
+
+router.get('/auth', function(req, res){
   var email = req.param('email');
   var password = req.param('password');
   MongoClient.connect(url, function(err, db){
@@ -24,11 +29,11 @@ router.get('/user', function(req, res){
   });
 });
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express',  req: req });
-});
-
+router.delete('/auth', function(req, res){
+  req.session.destroy();
+  res.sendStatus(200);
+})
+  
 router.post('/user', function(req, res){
 	var email = req.body.email;
 	var password = req.body.password;

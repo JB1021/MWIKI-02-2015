@@ -74,7 +74,9 @@ table {
 #nav .btn-sign-up{
 	right: 200px;
 }
-
+#nav .btn-sign-out{
+	right: 150px;
+}
 #nav .year-input {
 	width: 80px;
 }

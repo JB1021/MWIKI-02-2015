@@ -27,31 +27,43 @@ WIKI.elements.markerModal = $("#marker-modal");
 
 WIKI.methods.init = function() {
 	var btnNewmap = $("#newmap .submit");
-  var btnSignIn = $('#sign-in .submit');
-  var btnSignUp = $('#sign-up .submit');
+  var submitSignIn = $('#sign-in .submit');
+  var submitSignUp = $('#sign-up .submit');
+  var btnSignOut = $('#nav .btn-sign-out');
+  var btnSignIn = $('#nav .btn-sign-in');
+  var btnSignUp = $('#nav .btn-sign-up');
 	var timenav = $("#timenav");
 
-  btnSignUp.on("click",function(){
-      var email = $("#sign-up .email").val();
-      var password = $("#sign-up .password").val();
+  submitSignUp.click(function(){
+    var email = $("#sign-up .email").val();
+    var password = $("#sign-up .password").val();
 
-      $.post("http://localhost:3000/user", {email : email, password : password}, function(){
-          $('#modals .mask, .window').hide();
-      })
+    $.post("http://localhost:3000/user", {email : email, password : password}, function(){
+        $('#modals .mask, .window').hide();
+    })
   });
 	
-  btnSignIn.on("click",function(){
-      var email = $("#sign-in .email").val();
-      var password = $("#sign-in .password").val();
+  submitSignIn.click(function(){
+    var email = $("#sign-in .email").val();
+    var password = $("#sign-in .password").val();
 
-      $.get("http://localhost:3000/user", {email : email, password : password}, function(result){
-          console.log(result.email);
-          console.log(result);
-          $('#modals .mask, .window').hide();
-      })
+    $.get("http://localhost:3000/auth", {email : email, password : password}, function(result){
+      btnSignUp.hide();
+      btnSignIn.hide();
+      btnSignOut.show();
+      $('#modals .mask, .window').hide();
+    })
   });
 
-	btnNewmap.on("click", function(){
+  btnSignOut.click(function(){
+    $.delete("http://localhost:3000/auth", {}, function(){
+      btnSignOut.hide();
+      btnSignIn.show();
+      btnSignUp.show();
+    })
+  });
+
+	btnNewmap.click(function(){
 		var year = $("#newmap .year").val();
 		var flag = new WIKI.flag(year);
 		timenav.prepend(flag.element);
@@ -59,41 +71,46 @@ WIKI.methods.init = function() {
 	});
 
  	$('div[name=modal]').click(function(e) {
-        var modalId = $(this).attr('href');   
-        var maskHeight = $(document).height();
-        var maskWidth = $(window).width();
+    var modalId = $(this).attr('href');   
+    var maskHeight = $(document).height();
+    var maskWidth = $(window).width();
     
-    	var mask = $('#modals .mask');
-        mask.css({'width':maskWidth,'height':maskHeight});
-        mask.fadeIn(800);    
-        mask.fadeTo("slow",0.8);    
+    var mask = $('#modals .mask');
+      mask.css({'width':maskWidth,'height':maskHeight});
+      mask.fadeIn(800);    
+      mask.fadeTo("slow",0.8);    
     
-        var windowHeight = $(window).height();
-        var windowWidth = $(window).width();
-        var modal = $(modalId);
-        modal.css('top',  windowHeight/2-modal.height()/2);
-        modal.css('left', windowWidth/2-modal.width()/2);
-        modal.fadeIn(800); 
-    });
+      var windowHeight = $(window).height();
+      var windowWidth = $(window).width();
+      var modal = $(modalId);
+      modal.css('top',  windowHeight/2-modal.height()/2);
+      modal.css('left', windowWidth/2-modal.width()/2);
+      modal.fadeIn(800); 
+  });
     
-    $('.window .close').click(function (e) {
-        $('#modals .mask, .window').hide();
-    });        
+  $('.window .close').click(function (e) {
+    $('#modals .mask, .window').hide();
+  });        
     
-    $('#modals .mask').click(function () {
-        $(this).hide();
-        $('.window').hide();
-    });            
+  $('#modals .mask').click(function () {
+    $(this).hide();
+    $('.window').hide();
+  });            
     
-    $(window).resize(function () {
+  $(window).resize(function () {
  		var modal = $('#modals .window');
-        var windowHeight = $(window).height();
-        var windowWidth = $(window).width();
-        modal.css('top',  windowHeight/2 - modal.height()/2);
-        modal.css('left', windowWidth/2 - modal.width()/2);
+    var windowHeight = $(window).height();
+    var windowWidth = $(window).width();
+    modal.css('top',  windowHeight/2 - modal.height()/2);
+    modal.css('left', windowWidth/2 - modal.width()/2);
 	});
 
+  $('#marker-modal .close').click(function (e) {
+    WIKI.elements.markerModal.hide();
+  });        
+
 };
+
 
 WIKI.flag = {};
 WIKI.flag.year = 0;
