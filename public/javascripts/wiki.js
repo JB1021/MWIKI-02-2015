@@ -17,12 +17,15 @@ jQuery.each( [ "put", "delete" ], function( i, method ) {
 });
 
 document.addEventListener("DOMContentLoaded", function(e) {
-	WIKI.init();
+	WIKI.methods.init();
 });
 
 var WIKI = WIKI || {};
 WIKI.methods = WIKI.methods || {};
-WIKI.init = function() {
+WIKI.elements = WIKI.elements || {};
+WIKI.elements.markerModal = $("#marker-modal");
+
+WIKI.methods.init = function() {
 	var btnNewmap = $("#newmap .submit");
   var btnSignIn = $('#sign-in .submit');
   var btnSignUp = $('#sign-up .submit');
@@ -107,6 +110,7 @@ WIKI.flag = function(year) {
 WIKI.flag.prototype.movePointer = function(left){
 	this.flagPointer.css('left',left);	
 };
+
 
 Templates = {}; 
 Templates.mapFlag = [

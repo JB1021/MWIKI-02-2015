@@ -47,16 +47,23 @@ function zoomed() {
 }
 
 function mouseClick(d, i) {
-    var position = d3.mouse(svg.node());
-    var translate = zoom.translate();
+    var mousePos = d3.mouse(svg.node());
+    var mapLeftTop = zoom.translate();
     var scale = zoom.scale();
 
-    console.log((translate[0] - position[0])/scale);
-    console.log((translate[1] - position[1])/scale);
-        
-    var map = container.append("image").attr("xlink:href","../images/marker.png")
+    var markerXPos = -(mapLeftTop[0] - mousePos[0])/scale-5;
+    var markerYPos = -(mapLeftTop[1] - mousePos[1])/scale-10;
+
+    container.append("image").attr("xlink:href","../images/marker.png")
     .attr("width", 10)
     .attr("height", 10)
-    .attr("x", -(translate[0] - position[0])/scale-5)
-    .attr("y", -(translate[1] - position[1])/scale-10);
+    .attr("x", markerXPos)
+    .attr("y", markerYPos);
+    
+    WIKI.elements.markerModal.show();
+    WIKI.elements.markerModal.css({
+        "position" : "absolute",
+        "top" : mousePos[1]+140+"px",
+        "left" : mousePos[0]+30+"px"
+    });
 }
