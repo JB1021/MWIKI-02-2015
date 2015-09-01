@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function(e) {
 var WIKI = WIKI || {};
 WIKI.methods = WIKI.methods || {};
 WIKI.elements = WIKI.elements || {};
+WIKI.svg = WIKI.svg || {};
 WIKI.elements.markerModal = $("#marker-modal");
 
 WIKI.methods.init = function() {
@@ -51,6 +52,11 @@ WIKI.methods.init = function() {
       btnSignUp.hide();
       btnSignIn.hide();
       btnSignOut.show();
+      var maps = result.user.maps;
+      for(var i=0; i<maps.length;i++){
+        var flag = new WIKI.flag(maps[i].year);
+        timenav.prepend(flag.element);
+      }
       $('#modals .mask, .window').hide();
     })
   });

@@ -14,16 +14,10 @@ router.get('/auth', function(req, res){
   var password = req.param('password');
   MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
-    db.collection('user').find({email: email, password: password}).toArray(function(err, docs){
-      if(err){
-        res.sendStatus(500);
-      }
-      if(docs.length === 0){
-
-      } else {
-        req.session.auth = email;
-      }
-      res.json({email:email});
+    db.collection('user').find({email: email, password: password}).toArray(function(err, user){
+      if(err) res.sendStatus(500);
+      if(user.length !== 0) req.session.auth = email;
+      res.json({user:user[0]});
       db.close(); 
     });
   });
@@ -54,7 +48,7 @@ router.post('/map', function(req, res){
     var email = req.session.auth;
     MongoClient.connect(url, function(err, db){
       if(err) res.sendStatus(500);
-      db.collection('user').update({email: email}, {$push: {maps : year}}, function(err, updated){
+      db.collection('user').update({email: email}, {$push: {maps : {year : year}}}, function(err, updated){
         if(err) res.sendStatus(500);
         res.json({year:year});
         db.close(); 

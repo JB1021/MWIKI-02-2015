@@ -92,6 +92,7 @@ table {
 	width: 1050px;
 	height: 100px;
 	border: dashed grey 2px;
+	position: relative;
 }
 #timenav .bar {
 	width: 3px;

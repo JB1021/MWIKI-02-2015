@@ -1,3 +1,6 @@
+
+WIKI.svg = svg;
+
 var margin = {top: 30, right: 30, bottom: 30, left: 30};
 var width = 1042 - margin.left - margin.right,
     height = 681- margin.top - margin.bottom;
@@ -23,7 +26,6 @@ var svg = d3.select("#map svg")
     .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
     .call(zoom)
     .on("click", mouseClick);
-
 var container = svg.append("g");
 var map = container.append("image").attr("xlink:href","../images/worldmap.svg")
     .attr("width", width)
@@ -41,7 +43,6 @@ function zoomed() {
         scale = zoom.scale();
     var tx = Math.min(0, Math.max(width * (1 - scale), translate[0]));
     var ty = Math.min(0, Math.max(height * (1 - scale), translate[1]));
-
     zoom.translate([tx, ty]);
     container.attr("transform", "translate(" + [tx,ty] + ")scale(" + scale + ")");
 }
