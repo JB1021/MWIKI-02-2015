@@ -65,9 +65,15 @@ WIKI.methods.init = function() {
 
 	btnNewmap.click(function(){
 		var year = $("#newmap .year").val();
-		var flag = new WIKI.flag(year);
-		timenav.prepend(flag.element);
-		$('#modals .mask, .window').hide();
+    $.post("http://localhost:3000/map", {year : year}, function(result){
+      if(result.year === undefined || result.year === null){
+        alert(result.auth);
+        return;
+      };
+      var flag = new WIKI.flag(result.year);
+      timenav.prepend(flag.element);
+      $('#modals .mask, .window').hide();  
+    });	
 	});
 
  	$('div[name=modal]').click(function(e) {

@@ -21,7 +21,7 @@ router.get('/auth', function(req, res){
       if(docs.length === 0){
 
       } else {
-        req.session.email = email;
+        req.session.auth = email;
       }
       res.json({email:email});
       db.close(); 
@@ -40,13 +40,29 @@ router.post('/user', function(req, res){
 	MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
     db.collection('user').insert({email: email, password: password}, function(err, inserted){
-      if(err){
-        res.sendStatus(500);
-      }
+      if(err) res.sendStatus(500);
+      
       res.sendStatus(200);
       db.close();
     });
   });
+});
+
+router.post('/map', function(req, res){
+  if (req.session.auth !== undefined && req.session.auth !== null) {
+    var year = req.param('year');
+    var email = req.session.auth;
+    MongoClient.connect(url, function(err, db){
+      if(err) res.sendStatus(500);
+      db.collection('user').update({email: email}, {$push: {maps : year}}, function(err, updated){
+        if(err) res.sendStatus(500);
+        res.json({year:year});
+        db.close(); 
+      });
+    });
+  } else {
+    res.json({auth:"로그인 먼저 하세요."});
+  }
 });
 
 module.exports = router;
