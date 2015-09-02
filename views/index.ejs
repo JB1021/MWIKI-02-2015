@@ -8,14 +8,14 @@
 	<body>
 		<header id="nav">
 			<div class="logo">지도위키</div>
-				<div class="btn btn-newmap" name="modal" href="#newmap">new map</div>
+				<div class="btn btn-new-map" name="modal" href=".new-map">new map</div>
 			<% if (req.session.email){ %> 
-				<div class="btn btn-sign-up" name="modal" href="#sign-up" style="display:none">sign up</div>
-        		<div class="btn btn-sign-in" name="modal" href="#sign-in" style="display:none">sign in</div>
+				<div class="btn btn-sign-up" name="modal" href=".sign-up" style="display:none">sign up</div>
+        		<div class="btn btn-sign-in" name="modal" href=".sign-in" style="display:none">sign in</div>
 				<div class="btn btn-sign-out" style="display:block">sign out</div>
         	<% }  else { %>
-				<div class="btn btn-sign-up" name="modal" href="#sign-up" style="display:block">sign up</div>
-        		<div class="btn btn-sign-in" name="modal" href="#sign-in" style="display:block">sign in</div>
+				<div class="btn btn-sign-up" name="modal" href=".sign-up" style="display:block">sign up</div>
+        		<div class="btn btn-sign-in" name="modal" href=".sign-in" style="display:block">sign in</div>
 				<div class="btn btn-sign-out" style="display:none">sign out</div>
         	<% } %>
 		</header>
@@ -26,18 +26,18 @@
 			<div class="bar flag-pointer"></div>
 		</ul>
 		<section id="modals">
-		    <div id="newmap" class="window modal">
+		    <div class="window modal new-map">
 				<input class="year" type="text" placeholder="year"/>
 				<input class="submit" type="submit" placeholder="submit">
 				<div class="close"></div>       
    			</div>
-		    <div id="sign-up" class="window modal">
+		    <div class="window modal sign-up">
 				<input class="email" type="text" placeholder="email"/>
 				<input class="password" type="text" placeholder="password"/>
 				<input class="submit" type="submit" placeholder="submit">       
 				<div class="close"></div>       
    			</div>
-   			<div id="sign-in" class="window modal">
+   			<div class="window modal sign-in">
 				<input class="email" type="text" placeholder="email"/>
 				<input class="password" type="text" placeholder="password"/>
 				<input class="submit" type="submit" placeholder="submit">       

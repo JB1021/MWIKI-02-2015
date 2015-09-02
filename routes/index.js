@@ -16,7 +16,11 @@ router.get('/auth', function(req, res){
     if(err) res.sendStatus(500);
     db.collection('user').find({email: email, password: password}).toArray(function(err, user){
       if(err) res.sendStatus(500);
-      if(user.length !== 0) req.session.auth = email;
+      if(user.length !== 0){
+        req.session.auth = user[0];
+      } else{
+      }
+
       res.json({user:user[0]});
       db.close(); 
     });

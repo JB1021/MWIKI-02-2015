@@ -17,133 +17,153 @@ jQuery.each( [ "put", "delete" ], function( i, method ) {
 });
 
 document.addEventListener("DOMContentLoaded", function(e) {
-	WIKI.methods.init();
+	var wiki = new WIKI();
+  wiki.init();
 });
 
-var WIKI = WIKI || {};
-WIKI.methods = WIKI.methods || {};
-WIKI.elements = WIKI.elements || {};
-WIKI.svg = WIKI.svg || {};
-WIKI.elements.markerModal = $("#marker-modal");
+var UTIL = UTIL || {}
+UTIL.isEmpty = function(obj){
+  if (obj == null) return true;
+    if (obj.length > 0)    return false;
+    if (obj.length === 0)  return true;
+    for (var key in obj) {
+      if (hasOwnProperty.call(obj, key)) return false;
+    }
+    return true;
+}
 
-WIKI.methods.init = function() {
-	var btnNewmap = $("#newmap .submit");
-  var submitSignIn = $('#sign-in .submit');
-  var submitSignUp = $('#sign-up .submit');
-  var btnSignOut = $('#nav .btn-sign-out');
-  var btnSignIn = $('#nav .btn-sign-in');
-  var btnSignUp = $('#nav .btn-sign-up');
-	var timenav = $("#timenav");
+var WIKI = function(){
 
-  submitSignUp.click(function(){
-    var email = $("#sign-up .email").val();
-    var password = $("#sign-up .password").val();
-
-    $.post("http://localhost:3000/user", {email : email, password : password}, function(){
-        $('#modals .mask, .window').hide();
-    })
-  });
-	
-  submitSignIn.click(function(){
-    var email = $("#sign-in .email").val();
-    var password = $("#sign-in .password").val();
-
-    $.get("http://localhost:3000/auth", {email : email, password : password}, function(result){
-      btnSignUp.hide();
-      btnSignIn.hide();
-      btnSignOut.show();
-      var maps = result.user.maps;
-      for(var i=0; i<maps.length;i++){
-        var flag = new WIKI.flag(maps[i].year);
+  return {
+    btnSignIn : $('#nav .btn-sign-in'),
+    btnSignOut : $('#nav .btn-sign-out'),
+    btnSignUp : $('#nav .btn-sign-up'),
+    timenav : $('#timenav'),
+    markerModal : $("#marker-modal"),
+    addMap : function(){
+      var year = $("#newmap .year").val();
+      $.post("http://localhost:3000/map", {year : year}, function(result){
+        if(UTIL.isEmpty(result)){
+          alert("로그인 먼저 하세요");
+          return;          
+        }
+        var flag = new FLAG(result.year);
         timenav.prepend(flag.element);
-      }
-      $('#modals .mask, .window').hide();
-    })
-  });
-
-  btnSignOut.click(function(){
-    $.delete("http://localhost:3000/auth", {}, function(){
-      btnSignOut.hide();
-      btnSignIn.show();
-      btnSignUp.show();
-    })
-  });
-
-	btnNewmap.click(function(){
-		var year = $("#newmap .year").val();
-    $.post("http://localhost:3000/map", {year : year}, function(result){
-      if(result.year === undefined || result.year === null){
-        alert(result.auth);
-        return;
-      };
-      var flag = new WIKI.flag(result.year);
-      timenav.prepend(flag.element);
-      $('#modals .mask, .window').hide();  
-    });	
-	});
-
- 	$('div[name=modal]').click(function(e) {
-    var modalId = $(this).attr('href');   
-    var maskHeight = $(document).height();
-    var maskWidth = $(window).width();
-    
-    var mask = $('#modals .mask');
-      mask.css({'width':maskWidth,'height':maskHeight});
-      mask.fadeIn(800);    
-      mask.fadeTo("slow",0.8);    
-    
-      var windowHeight = $(window).height();
-      var windowWidth = $(window).width();
-      var modal = $(modalId);
-      modal.css('top',  windowHeight/2-modal.height()/2);
-      modal.css('left', windowWidth/2-modal.width()/2);
-      modal.fadeIn(800); 
-  });
-    
-  $('.window .close').click(function (e) {
-    $('#modals .mask, .window').hide();
-  });        
-    
-  $('#modals .mask').click(function () {
-    $(this).hide();
-    $('.window').hide();
-  });            
-    
-  $(window).resize(function () {
- 		var modal = $('#modals .window');
-    var windowHeight = $(window).height();
-    var windowWidth = $(window).width();
-    modal.css('top',  windowHeight/2 - modal.height()/2);
-    modal.css('left', windowWidth/2 - modal.width()/2);
-	});
-
-  $('#marker-modal .close').click(function (e) {
-    WIKI.elements.markerModal.hide();
-  });        
-
-};
+        $('#modals .mask, .window').hide();  
+      }); 
+    },
+    signUp : function(){
+      var email = $("#modals .sign-up .email").val();
+      var password = $("#modals .sign-up .password").val();
+      $.post("http://localhost:3000/user", {email : email, password : password}, function(){
+        $('#modals .mask, .window').hide();
+      })      
+    },
+    signIn : function(){
+      var email = $("#modals .sign-in .email").val();
+      var password = $("#modals .sign-in .password").val();
+      var self = this;
+      $.get("http://localhost:3000/auth", {email : email, password : password}, function(result){
+        if(UTIL.isEmpty(result)) {
+            alert("패스워드 혹은 아이디가 틀렸습니다.");
+            return;
+        }
+        self.btnSignUp.hide();
+        self.btnSignIn.hide();
+        self.btnSignOut.show();
+        var maps = result.user.maps;
+        for(var i=0; i<maps.length;i++){
+          var flag = new FLAG(maps[i].year);
+          self.timenav.prepend(flag.element);
+        }
+        $('#modals .mask, .window').hide();
+      });
+    },
+    signOut : function(){
+      var self = this;
+      $.delete("http://localhost:3000/auth", {}, function(){
+        self.btnSignOut.hide();
+        self.btnSignIn.show();
+        self.btnSignUp.show();
+      })
+    },
+    init : function(){
+      var timenav = $("#timenav");
+      var modals = $("#modals");
+      modals.on("click", ".new-map .submit", this.addMap.bind(this));
+      modals.on("click", ".sign-up .submit", this.signUp.bind(this));
+      modals.on("click", ".sign-in .submit", this.signIn.bind(this));
+      this.btnSignOut.on("click", this.signOut.bind(this));
 
 
-WIKI.flag = {};
-WIKI.flag.year = 0;
-WIKI.flag = function(year) {
-	this.flagPointer = $("#timenav .flag-pointer");
-	this.year = year;
-	var template = Handlebars.compile(Templates.mapFlag);
-	var flagObj = { position : year/2 };
-	this.element = $(template(flagObj));
-	this.element.on("click", function(){
-		this.movePointer(this.year/2);
-	}.bind(this));
-};
-WIKI.flag.prototype.movePointer = function(left){
-	this.flagPointer.css('left',left);	
-};
+      $('div[name=modal]').click(function(e) {
+        var modalClass = $(this).attr('href');   
+        var maskHeight = $(document).height();
+        var maskWidth = $(window).width();
+        
+        var mask = $('#modals .mask');
+          mask.css({'width':maskWidth,'height':maskHeight});
+          mask.fadeIn(800);    
+          mask.fadeTo("slow",0.8);    
+        
+          var windowHeight = $(window).height();
+          var windowWidth = $(window).width();
+          var modal = $(modalClass);
+          modal.css('top',  windowHeight/2-modal.height()/2);
+          modal.css('left', windowWidth/2-modal.width()/2);
+          modal.fadeIn(800); 
+      });
+        
+      $('.window .close').click(function (e) {
+        $('#modals .mask, .window').hide();
+      });        
+        
+      $('#modals .mask').click(function () {
+        $(this).hide();
+        $('.window').hide();
+      });            
+        
+      $(window).resize(function () {
+        var modal = $('#modals .window');
+        var windowHeight = $(window).height();
+        var windowWidth = $(window).width();
+        modal.css('top',  windowHeight/2 - modal.height()/2);
+        modal.css('left', windowWidth/2 - modal.width()/2);
+      });
 
+      $('#marker-modal .close').click(function (e) {
+        WIKI.elements.markerModal.hide();
+      });        
+    }
+  }
+}
+
+var FLAG = function(year){
+  var flagObj = { position : year/2 };
+  var template = Handlebars.compile(Templates.flag);
+  this.year = year;
+  this.element = $(template(flagObj));
+  this.element.on("click", function(){
+    this.movePointer(this.year/2);
+    this.changeMap(year);
+  }.bind(this));
+}
+
+FLAG.prototype.movePointer = function(left){
+  $("#timenav .flag-pointer").css('left', left)
+}
+
+FLAG.prototype.changeMap = function(year){
+    container = d3.select("#map svg g").append("text")
+    .attr("x", 20)
+    .attr("y", 50)
+    .style("font-size","50px")
+    .text("AD."+year);
+}
 
 Templates = {}; 
-Templates.mapFlag = [
-	'<li class="mapFlag">',
+Templates.flag = [
+	'<li class="flag">',
 		'<div class="bar" style="left: {{position}}px;"></div>',
 		'<div class="year"></div>',
 	'</li>'

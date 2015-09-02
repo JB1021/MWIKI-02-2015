@@ -1,6 +1,3 @@
-
-WIKI.svg = svg;
-
 var margin = {top: 30, right: 30, bottom: 30, left: 30};
 var width = 1042 - margin.left - margin.right,
     height = 681- margin.top - margin.bottom;
@@ -37,6 +34,8 @@ var background = svg.append("rect")
     .style("fill", "none")
     .style("stroke-width", "1")
     .style("stroke-dasharray","5,5");
+
+
 
 function zoomed() {
     var translate = zoom.translate(),
