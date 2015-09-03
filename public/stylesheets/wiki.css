@@ -55,7 +55,7 @@ table {
 	position: absolute;
 	left: 100px;
 }
-#nav .btn{
+#nav div{
 	width: 100px;
 	height: 50px;
 	font-size: 15px;
@@ -65,7 +65,7 @@ table {
 	text-align: center;
 	border: dashed grey 2px;
 }
-#nav .btn-newmap{
+#nav .btn-new-map{
 	right: 300px;
 }
 #nav .btn-sign-in{

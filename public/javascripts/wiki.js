@@ -33,25 +33,31 @@ UTIL.isEmpty = function(obj){
 }
 
 var WIKI = function(){
+    btnSignIn = $('#nav .btn-sign-in');
+    btnSignOut = $('#nav .btn-sign-out');
+    btnSignUp = $('#nav .btn-sign-up');
+    timenav = $('#timenav');
+    markerModal = $("#marker-modal");
 
   return {
-    btnSignIn : $('#nav .btn-sign-in'),
-    btnSignOut : $('#nav .btn-sign-out'),
-    btnSignUp : $('#nav .btn-sign-up'),
-    timenav : $('#timenav'),
-    markerModal : $("#marker-modal"),
     addMap : function(){
-      var year = $("#newmap .year").val();
+      var year = $("#modals .new-map .year").val();
       $.post("http://localhost:3000/map", {year : year}, function(result){
         if(UTIL.isEmpty(result)){
           alert("로그인 먼저 하세요");
           return;          
         }
         var flag = new FLAG(result.year);
+        flag.changeMap(result.year);
+        flag.movePointer(result.year);
         timenav.prepend(flag.element);
         $('#modals .mask, .window').hide();  
       }); 
-    },
+    },      
+
+    getMaps : function(){
+
+    }, 
     signUp : function(){
       var email = $("#modals .sign-up .email").val();
       var password = $("#modals .sign-up .password").val();
@@ -62,39 +68,35 @@ var WIKI = function(){
     signIn : function(){
       var email = $("#modals .sign-in .email").val();
       var password = $("#modals .sign-in .password").val();
-      var self = this;
       $.get("http://localhost:3000/auth", {email : email, password : password}, function(result){
         if(UTIL.isEmpty(result)) {
             alert("패스워드 혹은 아이디가 틀렸습니다.");
             return;
         }
-        self.btnSignUp.hide();
-        self.btnSignIn.hide();
-        self.btnSignOut.show();
+        btnSignUp.hide();
+        btnSignIn.hide();
+        btnSignOut.show();
         var maps = result.user.maps;
         for(var i=0; i<maps.length;i++){
           var flag = new FLAG(maps[i].year);
-          self.timenav.prepend(flag.element);
+          timenav.prepend(flag.element);
         }
         $('#modals .mask, .window').hide();
       });
     },
     signOut : function(){
-      var self = this;
       $.delete("http://localhost:3000/auth", {}, function(){
-        self.btnSignOut.hide();
-        self.btnSignIn.show();
-        self.btnSignUp.show();
+        btnSignOut.hide();
+        btnSignIn.show();
+        btnSignUp.show();
       })
     },
     init : function(){
-      var timenav = $("#timenav");
       var modals = $("#modals");
       modals.on("click", ".new-map .submit", this.addMap.bind(this));
       modals.on("click", ".sign-up .submit", this.signUp.bind(this));
       modals.on("click", ".sign-in .submit", this.signIn.bind(this));
-      this.btnSignOut.on("click", this.signOut.bind(this));
-
+      btnSignOut.on("click", this.signOut.bind(this));
 
       $('div[name=modal]').click(function(e) {
         var modalClass = $(this).attr('href');   
@@ -132,7 +134,7 @@ var WIKI = function(){
       });
 
       $('#marker-modal .close').click(function (e) {
-        WIKI.elements.markerModal.hide();
+        markerModal.hide();
       });        
     }
   }
@@ -144,13 +146,13 @@ var FLAG = function(year){
   this.year = year;
   this.element = $(template(flagObj));
   this.element.on("click", function(){
-    this.movePointer(this.year/2);
+    this.movePointer(year);
     this.changeMap(year);
   }.bind(this));
 }
 
-FLAG.prototype.movePointer = function(left){
-  $("#timenav .flag-pointer").css('left', left)
+FLAG.prototype.movePointer = function(year){
+  $("#timenav .flag-pointer").css('left', year/2);
 }
 
 FLAG.prototype.changeMap = function(year){

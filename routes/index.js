@@ -6,6 +6,8 @@ var url = 'mongodb://125.209.195.202:27017/test';
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+
+
   res.render('index', { title: 'Express',  req: req });
 });
 
@@ -18,6 +20,7 @@ router.get('/auth', function(req, res){
       if(err) res.sendStatus(500);
       if(user.length !== 0){
         req.session.auth = user[0];
+        console.log(req.session.auth);
       } else{
       }
 
@@ -63,4 +66,14 @@ router.post('/map', function(req, res){
   }
 });
 
+var UTIL = UTIL || {}
+UTIL.isEmpty = function(obj){
+  if (obj == null) return true;
+    if (obj.length > 0)    return false;
+    if (obj.length === 0)  return true;
+    for (var key in obj) {
+      if (hasOwnProperty.call(obj, key)) return false;
+    }
+    return true;
+}
 module.exports = router;

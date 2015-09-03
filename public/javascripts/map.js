@@ -35,8 +35,6 @@ var background = svg.append("rect")
     .style("stroke-width", "1")
     .style("stroke-dasharray","5,5");
 
-
-
 function zoomed() {
     var translate = zoom.translate(),
         scale = zoom.scale();
@@ -59,9 +57,9 @@ function mouseClick(d, i) {
     .attr("height", 10)
     .attr("x", markerXPos)
     .attr("y", markerYPos);
-    
-    WIKI.elements.markerModal.show();
-    WIKI.elements.markerModal.css({
+    console.log(WIKI.markerModal);
+    $("#marker-modal").show();
+    $("#marker-modal").css({
         "position" : "absolute",
         "top" : mousePos[1]+140+"px",
         "left" : mousePos[0]+30+"px"
