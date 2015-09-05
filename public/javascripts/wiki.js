@@ -42,6 +42,17 @@ var WIKI = function(){
   var timenav = $('#timenav');
   var markerModal = $("#marker-modal");
 
+  function deleteMarkerInfo(){
+    $("#map .marker-info").remove();
+  }
+  function showMarkerInfo() {
+    var target = $(d3.event.target);
+    var targetPos = target.offset();
+    var title = target.data("title");
+    var description = target.data("description");
+    var markerInfo = new MAKRERINFO(title, description, targetPos.left-100, targetPos.top-80);
+    $("#map").prepend(markerInfo.element);
+  }
   function addModalEvent() {
     $('div[name=modal]').click(function(e) {
         var modalClass = $(this).attr('href');   
@@ -104,9 +115,11 @@ var WIKI = function(){
           return;          
         }
         var maps = result.user.maps;
-        for(var i=0; i<maps.length;i++){
-          var flag = new FLAG(maps[i].year);
-          timenav.prepend(flag.element);
+        if(!UTIL.isEmpty(maps)){
+          for(var i=0; i<maps.length;i++){
+            var flag = new FLAG(maps[i].year);
+            timenav.prepend(flag.element);
+          }  
         }
       });
     }, 
@@ -129,9 +142,11 @@ var WIKI = function(){
         btnSignIn.hide();
         btnSignOut.show();
         var maps = result.user.maps;
-        for(var i=0; i<maps.length;i++){
-          var flag = new FLAG(maps[i].year);
-          timenav.prepend(flag.element);
+        if(!UTIL.isEmpty(maps)){
+          for(var i=0; i<maps.length;i++){
+            var flag = new FLAG(maps[i].year);
+            timenav.prepend(flag.element);
+          }
         }
         $('#modals .mask, .window').hide();
       });
@@ -143,11 +158,36 @@ var WIKI = function(){
         btnSignUp.show();
       })
     },
+    addMarker : function(){
+
+      var xPos = markerModal.data("markerXPos");
+      var yPos = markerModal.data("markerYPos");
+      var title = $("#marker-modal .title").val();
+      var description = $("#marker-modal .description").val();
+      var year = $("#map .year").text();
+      var regex = /[^0-9]/g;
+      year = year.replace(regex, '');
+
+      $.post(url+"marker", {title:title, description:description, year:year, xPos:xPos, yPos:yPos}, function(result){
+        var marker = MAP.container.append("image")
+          .attr("xlink:href","../images/marker.png")
+          .attr("width", 10)
+          .attr("height", 10)
+          .attr("x", xPos)
+          .attr("y", yPos)
+          .attr("data-title", title)
+          .attr("data-description", description)
+          .on("mouseover", showMarkerInfo)
+          .on("mouseout", deleteMarkerInfo);
+        markerModal.hide();
+      })
+    },
     init : function(){
       var modals = $("#modals");
       modals.on("click", ".new-map .submit", this.addMap.bind(this));
       modals.on("click", ".sign-up .submit", this.signUp.bind(this));
       modals.on("click", ".sign-in .submit", this.signIn.bind(this));
+      markerModal.on("click", ".submit", this.addMarker);
       btnSignOut.on("click", this.signOut.bind(this));
       addModalEvent();
     }
@@ -173,10 +213,23 @@ FLAG.prototype.changeMap = function(year){
   $("#map .year").text("AD."+year);
 }
 
+MAKRERINFO = function(title, description, left, top){
+  var markerInfoObj = { title : title, description:description, left:left, top:top };
+  var template = Handlebars.compile(Templates.markerInfo);
+  this.element = $(template(markerInfoObj));
+}
+ 
+
 Templates = {}; 
 Templates.flag = [
 	'<li class="flag">',
 		'<div class="bar" style="left: {{position}}px;"></div>',
 		'<div class="year"></div>',
 	'</li>'
+].join("\n");
+Templates.markerInfo = [
+  '<div class="marker-info" style="left: {{left}}px; top: {{top}}px">',
+    '<div class="title">{{title}}</div>',
+    '<div class="description">{{description}}</div>',
+  '</div>'
 ].join("\n");

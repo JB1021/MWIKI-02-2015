@@ -74,6 +74,30 @@ router.post('/map', function(req, res){
   }
 });
 
+router.post('/marker', function(req, res){
+  if(!UTIL.isEmpty(req.session.auth)) {
+    var title = req.param('title');
+    var description = req.param('description');
+    var year = req.param('year');
+    var xPos = req.param('xPos');
+    var yPos = req.param('yPos');
+    var email = req.session.auth.email;
+    //year 없을 경우 에러처리 해주어야 함
+    MongoClient.connect(url, function(err, db){
+      if(err) res.sendStatus(500);
+      db.collection('user').update({email: email, 'maps.year' : year}, 
+        {$push: {'maps.$.markers' : {title : title, description: description, xPos:xPos, yPos:yPos}}}, function(err, updated){
+        if(err) res.sendStatus(500);
+        res.json({year:year, title:title, description:description, xPos:xPos, yPos:yPos});
+        db.close(); 
+      });
+    }); 
+  } else {
+    res.json({});
+  }
+})
+
+
 var UTIL = UTIL || {}
 UTIL.isEmpty = function(obj){
   if (obj == null) return true;

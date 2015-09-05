@@ -93,6 +93,14 @@ table {
 	left: 70px;
 	position: absolute;
 }
+#map .marker-info{
+	position: absolute;
+  	width:300px; 
+ 	height:180px;
+  	padding:10px;
+	background-color:#ffffff;
+	border: dashed grey 2px;
+}
 
 #timenav {
 	margin: 0px auto;
@@ -148,7 +156,6 @@ table {
 	right: 10px;
 	top: 10px;
 }
-
 #marker-modal {
   	width:300px; 
  	height:180px;

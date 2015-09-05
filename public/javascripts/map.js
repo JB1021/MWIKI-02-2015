@@ -23,6 +23,7 @@ var svg = d3.select("#map svg")
     .attr("transform", "translate(" + margin.left + "," + margin.right + ")")
     .call(zoom)
     .on("click", mouseClick);
+
 var container = svg.append("g");
 var map = container.append("image").attr("xlink:href","../images/worldmap.svg")
     .attr("width", width)
@@ -34,6 +35,9 @@ var background = svg.append("rect")
     .style("fill", "none")
     .style("stroke-width", "1")
     .style("stroke-dasharray","5,5");
+
+var MAP = MAP || {};
+MAP.container = container;
 
 function zoomed() {
     var translate = zoom.translate(),
@@ -57,11 +61,14 @@ function mouseClick(d, i) {
     .attr("height", 10)
     .attr("x", markerXPos)
     .attr("y", markerYPos);
-    console.log(WIKI.markerModal);
+
     $("#marker-modal").show();
     $("#marker-modal").css({
         "position" : "absolute",
         "top" : mousePos[1]+140+"px",
         "left" : mousePos[0]+30+"px"
     });
+    $("#marker-modal").data("markerXPos", markerXPos);
+    $("#marker-modal").data("markerYPos", markerYPos);
+
 }
