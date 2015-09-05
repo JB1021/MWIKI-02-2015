@@ -85,6 +85,13 @@ table {
 	margin: 0px auto;
 	width: 1050px;
 	height: 700px;
+	position: relative;
+}
+#map .year{
+	font-size: 35px;
+	top: 70px;
+	left: 70px;
+	position: absolute;
 }
 
 #timenav {
