@@ -120,6 +120,13 @@ table {
 	position: absolute;
 	z-index: 1;
 }
+#timenav .year {
+	position: absolute;
+	top: 120px;
+	left: -30px;
+	transform: skewX(10deg);
+	transform: rotate(60deg);
+}
 
 #modals .mask {
 	position:absolute;
@@ -156,6 +163,7 @@ table {
 	right: 10px;
 	top: 10px;
 }
+
 #marker-modal {
   	width:300px; 
  	height:180px;

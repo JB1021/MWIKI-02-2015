@@ -184,18 +184,18 @@ var WIKI = function(){
     },
     init : function(){
       var modals = $("#modals");
-      modals.on("click", ".new-map .submit", this.addMap.bind(this));
-      modals.on("click", ".sign-up .submit", this.signUp.bind(this));
-      modals.on("click", ".sign-in .submit", this.signIn.bind(this));
+      modals.on("click", ".new-map .submit", this.addMap);
+      modals.on("click", ".sign-up .submit", this.signUp);
+      modals.on("click", ".sign-in .submit", this.signIn);
       markerModal.on("click", ".submit", this.addMarker);
-      btnSignOut.on("click", this.signOut.bind(this));
+      btnSignOut.on("click", this.signOut);
       addModalEvent();
     }
   }
 }
 
 var FLAG = function(year){
-  var flagObj = { position : year/2 };
+  var flagObj = { position : year/2, year:year};
   var template = Handlebars.compile(Templates.flag);
   this.year = year;
   this.element = $(template(flagObj));
@@ -223,8 +223,9 @@ MAKRERINFO = function(title, description, left, top){
 Templates = {}; 
 Templates.flag = [
 	'<li class="flag">',
-		'<div class="bar" style="left: {{position}}px;"></div>',
-		'<div class="year"></div>',
+		'<div class="bar" style="left: {{position}}px;">',
+      '<div class="year">AD.{{year}}</div>',
+    '</div>',
 	'</li>'
 ].join("\n");
 Templates.markerInfo = [
