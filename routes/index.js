@@ -41,7 +41,7 @@ router.post('/user', function(req, res){
 });
 
 router.get('/map', function(req, res){
-    if (!UTIL.isEmpty(req.session.auth)) {
+  if (!UTIL.isEmpty(req.session.auth)) {
     var password = req.session.auth.password;
     var email = req.session.auth.email;
     MongoClient.connect(url, function(err, db){
@@ -89,6 +89,25 @@ router.post('/marker', function(req, res){
         {$push: {'maps.$.markers' : {title : title, description: description, xPos:xPos, yPos:yPos}}}, function(err, updated){
         if(err) res.sendStatus(500);
         res.json({year:year, title:title, description:description, xPos:xPos, yPos:yPos});
+        db.close(); 
+      });
+    }); 
+  } else {
+    res.json({});
+  }
+})
+
+router.get('/marker', function(req, res){
+  if(!UTIL.isEmpty(req.session.auth)) {
+    var year = req.param('year');
+    var email = req.session.auth.email;
+    //year 없을 경우 에러처리 해주어야 함
+    MongoClient.connect(url, function(err, db){
+      if(err) res.sendStatus(500);
+      db.collection('user').find({email: email, 'maps.year' : year}, {'maps.markers': 1}).toArray(function(err, user){
+        if(err) res.sendStatus(500);
+        console.log(user[0].maps);
+        res.json({maps: user[0].maps});
         db.close(); 
       });
     }); 

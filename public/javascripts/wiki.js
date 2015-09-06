@@ -53,7 +53,7 @@ var WIKI = function(){
     var markerInfo = new MAKRERINFO(title, description, targetPos.left-100, targetPos.top-80);
     $("#map").prepend(markerInfo.element);
   }
-  function addModalEvent() {
+  function addMarkerModalEvents() {
     $('div[name=modal]').click(function(e) {
         var modalClass = $(this).attr('href');   
         var maskHeight = $(document).height();
@@ -117,7 +117,7 @@ var WIKI = function(){
         var maps = result.user.maps;
         if(!UTIL.isEmpty(maps)){
           for(var i=0; i<maps.length;i++){
-            var flag = new FLAG(maps[i].year);
+            var flag = new FLAG(maps[i].year, this);
             timenav.prepend(flag.element);
           }  
         }
@@ -159,7 +159,6 @@ var WIKI = function(){
       })
     },
     addMarker : function(){
-
       var xPos = markerModal.data("markerXPos");
       var yPos = markerModal.data("markerYPos");
       var title = $("#marker-modal .title").val();
@@ -189,17 +188,25 @@ var WIKI = function(){
       modals.on("click", ".sign-in .submit", this.signIn);
       markerModal.on("click", ".submit", this.addMarker);
       btnSignOut.on("click", this.signOut);
-      addModalEvent();
+      addMarkerModalEvents();
     }
   }
 }
 
+WIKI.getMarkers = function(year){
+  $.get("http://localhost:3000/"+"marker", {year:year}, function(result){
+       var markers = result.maps[0].markers;
+       //maps[1]은 뭐지???
+
+  })
+}
 var FLAG = function(year){
   var flagObj = { position : year/2, year:year};
   var template = Handlebars.compile(Templates.flag);
   this.year = year;
   this.element = $(template(flagObj));
   this.element.on("click", function(){
+    WIKI.getMarkers(year)
     this.movePointer(year);
     this.changeMap(year);
   }.bind(this));
@@ -211,6 +218,7 @@ FLAG.prototype.movePointer = function(year){
 
 FLAG.prototype.changeMap = function(year){
   $("#map .year").text("AD."+year);
+  $("#map .marker").remove();
 }
 
 MAKRERINFO = function(title, description, left, top){

@@ -60,7 +60,8 @@ function mouseClick(d, i) {
     .attr("width", 10)
     .attr("height", 10)
     .attr("x", markerXPos)
-    .attr("y", markerYPos);
+    .attr("y", markerYPos)
+    .classed("marker", true);
 
     $("#marker-modal").show();
     $("#marker-modal").css({
