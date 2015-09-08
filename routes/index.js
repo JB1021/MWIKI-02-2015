@@ -104,9 +104,8 @@ router.get('/marker', function(req, res){
     //year 없을 경우 에러처리 해주어야 함
     MongoClient.connect(url, function(err, db){
       if(err) res.sendStatus(500);
-      db.collection('user').find({email: email, 'maps.year' : year}, {'maps.markers': 1}).toArray(function(err, user){
+      db.collection('user').find({email : "1"}, { maps: {$elemMatch : {'year': year}}}).toArray(function(err, user){
         if(err) res.sendStatus(500);
-        console.log(user[0].maps);
         res.json({maps: user[0].maps});
         db.close(); 
       });

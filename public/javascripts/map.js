@@ -25,7 +25,8 @@ var svg = d3.select("#map svg")
     .on("click", mouseClick);
 
 var container = svg.append("g");
-var map = container.append("image").attr("xlink:href","../images/worldmap.svg")
+var map = container.append("image")
+    .attr("xlink:href","../images/worldmap.svg")
     .attr("width", width)
     .attr("height", height);
 var background = svg.append("rect")
@@ -61,7 +62,7 @@ function mouseClick(d, i) {
     .attr("height", 10)
     .attr("x", markerXPos)
     .attr("y", markerYPos)
-    .classed("marker", true);
+    .attr("class", "marker");
 
     $("#marker-modal").show();
     $("#marker-modal").css({

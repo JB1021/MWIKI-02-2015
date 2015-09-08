@@ -50,7 +50,7 @@ var WIKI = function(){
     var targetPos = target.offset();
     var title = target.data("title");
     var description = target.data("description");
-    var markerInfo = new MAKRERINFO(title, description, targetPos.left-100, targetPos.top-80);
+    var markerInfo = new MAKRERINFO(title, description, targetPos.left-200, targetPos.top-80);
     $("#map").prepend(markerInfo.element);
   }
   function addMarkerModalEvents() {
@@ -93,8 +93,21 @@ var WIKI = function(){
         markerModal.hide();
       });        
   }
+  function drawMarker(xPos, yPos, title, description) {
+    MAP.container.append("image")
+      .attr("xlink:href","../images/marker.png")
+      .attr("width", 10)
+      .attr("height", 10)
+      .attr("x", xPos)
+      .attr("y", yPos)
+      .attr("data-title", title)
+      .attr("data-description", description)
+      .attr("class", "marker")
+      .on("mouseover", showMarkerInfo)
+      .on("mouseout", deleteMarkerInfo);
+  }
 
-  return {
+  var wiki = {
     addMap : function(){
       var year = $("#modals .new-map .year").val();
       $.post(url+"map", {year : year}, function(result){
@@ -102,7 +115,7 @@ var WIKI = function(){
           alert("로그인 먼저 하세요");
           return;          
         }
-        var flag = new FLAG(result.year);
+        var flag = new FLAG(result.year, wiki);
         flag.changeMap(result.year);
         flag.movePointer(result.year);
         timenav.prepend(flag.element);
@@ -117,7 +130,7 @@ var WIKI = function(){
         var maps = result.user.maps;
         if(!UTIL.isEmpty(maps)){
           for(var i=0; i<maps.length;i++){
-            var flag = new FLAG(maps[i].year, this);
+            var flag = new FLAG(maps[i].year, wiki);
             timenav.prepend(flag.element);
           }  
         }
@@ -143,10 +156,10 @@ var WIKI = function(){
         btnSignOut.show();
         var maps = result.user.maps;
         if(!UTIL.isEmpty(maps)){
-          for(var i=0; i<maps.length;i++){
-            var flag = new FLAG(maps[i].year);
+          maps.forEach(function(map){
+            var flag = new FLAG(map.year, wiki);
             timenav.prepend(flag.element);
-          }
+          })
         }
         $('#modals .mask, .window').hide();
       });
@@ -168,16 +181,7 @@ var WIKI = function(){
       year = year.replace(regex, '');
 
       $.post(url+"marker", {title:title, description:description, year:year, xPos:xPos, yPos:yPos}, function(result){
-        var marker = MAP.container.append("image")
-          .attr("xlink:href","../images/marker.png")
-          .attr("width", 10)
-          .attr("height", 10)
-          .attr("x", xPos)
-          .attr("y", yPos)
-          .attr("data-title", title)
-          .attr("data-description", description)
-          .on("mouseover", showMarkerInfo)
-          .on("mouseout", deleteMarkerInfo);
+        drawMarker(result.xPos, result.yPos, result.title, result.description);
         markerModal.hide();
       })
     },
@@ -189,24 +193,29 @@ var WIKI = function(){
       markerModal.on("click", ".submit", this.addMarker);
       btnSignOut.on("click", this.signOut);
       addMarkerModalEvents();
+    }, 
+    getMarkers : function(year){
+      $.get(url+"marker", {year:year}, function(result){
+        var markers = result.maps[0].markers;
+        if(UTIL.isEmpty(markers)) return;
+
+        markers.forEach(function(marker){
+          drawMarker(marker.xPos, marker.yPos, marker.title, marker.description);
+        })
+      })
     }
   }
+  return wiki;
 }
 
-WIKI.getMarkers = function(year){
-  $.get("http://localhost:3000/"+"marker", {year:year}, function(result){
-       var markers = result.maps[0].markers;
-       //maps[1]은 뭐지???
-
-  })
-}
-var FLAG = function(year){
+var FLAG = function(year, wiki){
   var flagObj = { position : year/2, year:year};
   var template = Handlebars.compile(Templates.flag);
   this.year = year;
+  this.wiki = wiki;
   this.element = $(template(flagObj));
   this.element.on("click", function(){
-    WIKI.getMarkers(year)
+    this.wiki.getMarkers(year);
     this.movePointer(year);
     this.changeMap(year);
   }.bind(this));
@@ -226,7 +235,6 @@ MAKRERINFO = function(title, description, left, top){
   var template = Handlebars.compile(Templates.markerInfo);
   this.element = $(template(markerInfoObj));
 }
- 
 
 Templates = {}; 
 Templates.flag = [
@@ -238,7 +246,7 @@ Templates.flag = [
 ].join("\n");
 Templates.markerInfo = [
   '<div class="marker-info" style="left: {{left}}px; top: {{top}}px">',
-    '<div class="title">{{title}}</div>',
-    '<div class="description">{{description}}</div>',
+    '<div class="title">title: {{title}}</div>',
+    '<div class="description">description: {{description}}</div>',
   '</div>'
 ].join("\n");
