@@ -35,16 +35,16 @@ router.post('/user', function(req, res){
 	MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
     db.collection('user').find({email:params.email}).toArray(function(err, user){
-      console.log(user);
       if(UTIL.isEmpty(user)) {
         db.collection('user').insert(params, function(err, inserted){
-        if(err) res.sendStatus(500);
-        res.sendStatus(200);
+          if(err) res.sendStatus(500);
+          res.sendStatus(200);
+          db.close();  
         });
       } else {
         res.json({error:Error.duplicateEmail});
+        db.close();
       }
-      db.close();
     });
   });
 });
@@ -55,7 +55,6 @@ router.get('/map', function(req, res){
     if(err) res.sendStatus(500);
     db.collection('user').find(auth).toArray(function(err, user){
       if(err) res.sendStatus(500);
-      console.log(user[0].maps);
       res.json({maps:user[0].maps});
       db.close(); 
     });

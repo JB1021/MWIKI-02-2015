@@ -19,7 +19,9 @@ jQuery.each( [ "put", "delete" ], function( i, method ) {
 var Error = {
   auth : "로그인 먼저 하세요.",
   invalidYear : "0~2100 사이의 숫자를 입력하세요.",
-  invalidSigninInfo: "패스워드와 아이디를 확인하세요."
+  invalidSigninInfo: "패스워드와 아이디를 확인하세요.",
+  invalidEmail : "형식에 맞지 않습니다. 이메일을 입력하세요.",
+  invalidPassword : "형식에 맞지 않습니다. 영대/소문자, 숫자 및 특수문자 조합 비밀번호 8자리이상 15자리 이하로 만드세요. 암호화는 하지 않습니다."
 }
 
 document.addEventListener("DOMContentLoaded", function(e) {
@@ -43,7 +45,18 @@ UTIL.isInvalidYear = function(year){
   if(!numRegex.test(year) || (year < 0 || year > 2100) || UTIL.isEmpty(year)) return true;
   return false;
 }
-      
+UTIL.isValidEmail = function(email){
+  var emailRegex = /[0-9a-zA-Z][_0-9a-zA-Z-]*@[_0-9a-zA-Z-]+(\.[_0-9a-zA-Z-]+){1,2}$/;
+  if(email.length == 0) return false;
+  if(!email.match(emailRegex)) return false;
+  return true;
+}
+UTIL.isValidPassword = function(password){
+  var passwordRegex = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$/;
+  if(!password.match(passwordRegex)) return false;
+  return true;
+}
+
 var WIKI = function(){
   var url = "http://localhost:3000";
   var btnSignIn = $('#nav .btn-sign-in');
@@ -155,6 +168,15 @@ var WIKI = function(){
     signUp : function(){
       var email = $("#modals .sign-up .email").val();
       var password = $("#modals .sign-up .password").val();
+
+      if(!UTIL.isValidEmail(email)){
+        alert(Error.invalidEmail);
+        return;
+      }
+      if(!UTIL.isValidPassword(password)){
+        alert(Error.invalidPassword);
+        return;
+      }
       $.post(url+"/user", {email : email, password : password}, function(result){
         if(!UTIL.isEmpty(result.error)) alert(result.error);
         $('#modals .mask, .window').hide();
