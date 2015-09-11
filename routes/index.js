@@ -4,6 +4,11 @@ var app = express();
 var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://125.209.195.202:27017/test';
 
+var Error = {
+  auth : "로그인 먼저 하세요.",
+  yearEmpty : "추가할 지도의 연도를 입력하세요."
+}
+
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express',  req: req });
 });
@@ -41,80 +46,77 @@ router.post('/user', function(req, res){
 });
 
 router.get('/map', function(req, res){
-  if (!UTIL.isEmpty(req.session.auth)) {
-    var password = req.session.auth.password;
-    var email = req.session.auth.email;
-    MongoClient.connect(url, function(err, db){
+  var auth = new AUTH(req);
+  MongoClient.connect(url, function(err, db){
+    if(err) res.sendStatus(500);
+    db.collection('user').find({email: auth.email, password: auth.password}).toArray(function(err, user){
       if(err) res.sendStatus(500);
-      db.collection('user').find({email: email, password: password}).toArray(function(err, user){
-        if(err) res.sendStatus(500);
-        res.json({user:user[0]});
-        db.close(); 
-      });
+      console.log(user[0].maps);
+      res.json({maps:user[0].maps});
+      db.close(); 
     });
-  } else { 
-    res.json({});
-  }
+  });
 }); 
 
 router.post('/map', function(req, res){
-  if (!UTIL.isEmpty(req.session.auth)) {
-    var year = req.param('year');
-    var email = req.session.auth.email;
-    MongoClient.connect(url, function(err, db){
+  var year = req.param('year');
+  var auth = new AUTH(req);
+  MongoClient.connect(url, function(err, db){
+    if(err) res.sendStatus(500);
+    db.collection('user').update({email: auth.email}, {$push: {maps : {year : year}}}, function(err, updated){
       if(err) res.sendStatus(500);
-      db.collection('user').update({email: email}, {$push: {maps : {year : year}}}, function(err, updated){
-        if(err) res.sendStatus(500);
-        res.json({year:year});
-        db.close(); 
-      });
-    }); 
-  } else{
-    res.json({});
-  }
+      res.json({year:year});
+      db.close(); 
+    });
+  }); 
 });
 
 router.post('/marker', function(req, res){
-  if(!UTIL.isEmpty(req.session.auth)) {
-    var title = req.param('title');
-    var description = req.param('description');
-    var year = req.param('year');
-    var xPos = req.param('xPos');
-    var yPos = req.param('yPos');
-    var email = req.session.auth.email;
-    //year 없을 경우 에러처리 해주어야 함
-    MongoClient.connect(url, function(err, db){
+  var title = req.param('title');
+  var description = req.param('description');
+  var year = req.param('year');
+  var xPos = req.param('xPos');
+  var yPos = req.param('yPos');
+  var auth = new AUTH(req);
+  MongoClient.connect(url, function(err, db){
+    if(err) res.sendStatus(500);
+    db.collection('user').update({email: auth.email, 'maps.year' : year}, 
+      {$push: {'maps.$.markers' : {title : title, description: description, xPos:xPos, yPos:yPos}}}, function(err, updated){
       if(err) res.sendStatus(500);
-      db.collection('user').update({email: email, 'maps.year' : year}, 
-        {$push: {'maps.$.markers' : {title : title, description: description, xPos:xPos, yPos:yPos}}}, function(err, updated){
-        if(err) res.sendStatus(500);
-        res.json({year:year, title:title, description:description, xPos:xPos, yPos:yPos});
-        db.close(); 
-      });
-    }); 
-  } else {
-    res.json({});
-  }
+      res.json({year:year, title:title, description:description, xPos:xPos, yPos:yPos});
+      db.close(); 
+    });
+  }); 
 })
 
 router.get('/marker', function(req, res){
-  if(!UTIL.isEmpty(req.session.auth)) {
-    var year = req.param('year');
-    var email = req.session.auth.email;
-    //year 없을 경우 에러처리 해주어야 함
-    MongoClient.connect(url, function(err, db){
+  var year = req.param('year');
+  var auth = new AUTH(req);
+  MongoClient.connect(url, function(err, db){
+    if(err) res.sendStatus(500);
+    db.collection('user').find({email : auth.email}, { maps: {$elemMatch : {'year': year}}}).toArray(function(err, user){
       if(err) res.sendStatus(500);
-      db.collection('user').find({email : "1"}, { maps: {$elemMatch : {'year': year}}}).toArray(function(err, user){
-        if(err) res.sendStatus(500);
-        res.json({maps: user[0].maps});
-        db.close(); 
-      });
-    }); 
-  } else {
-    res.json({});
-  }
+      res.json({markers: user[0].maps[0].markers});
+      db.close(); 
+    });
+  });  
 })
 
+var AUTH = function(req){
+  var email;
+  var password;
+  if(UTIL.isEmpty(req.session.quth)){
+    email = "SHADRED_USER";
+    password = "SHADRED_PASSWORD";
+  } else {
+    email = req.session.auth.email;
+    password = req.session.auth.password;
+  }
+  return {
+    email : email,
+    password : password
+  }
+}
 
 var UTIL = UTIL || {}
 UTIL.isEmpty = function(obj){
@@ -126,4 +128,5 @@ UTIL.isEmpty = function(obj){
     }
     return true;
 }
+
 module.exports = router;

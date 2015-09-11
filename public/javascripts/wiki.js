@@ -16,6 +16,12 @@ jQuery.each( [ "put", "delete" ], function( i, method ) {
   };
 });
 
+var Error = {
+  auth : "로그인 먼저 하세요.",
+  invalidYear : "0~2100 사이의 숫자를 입력하세요.",
+  invalidSigninInfo: "패스워드와 아이디를 확인하세요."
+}
+
 document.addEventListener("DOMContentLoaded", function(e) {
 	var wiki = new WIKI();
   wiki.init();
@@ -32,9 +38,13 @@ UTIL.isEmpty = function(obj){
     }
     return true;
 }
-
+UTIL.isInvalidYear = function(year){
+  var numRegex = /^[0-9+]*$/; 
+  if(!numRegex.test(year) || (year < 0 || year > 2100) || UTIL.isEmpty(year)) return true;
+  return false;
+}
+      
 var WIKI = function(){
-
   var url = "http://localhost:3000/";
   var btnSignIn = $('#nav .btn-sign-in');
   var btnSignOut = $('#nav .btn-sign-out');
@@ -108,13 +118,22 @@ var WIKI = function(){
   }
 
   var wiki = {
+    init : function(){
+      var modals = $("#modals");
+      modals.on("click", ".new-map .submit", this.addMap);
+      modals.on("click", ".sign-up .submit", this.signUp);
+      modals.on("click", ".sign-in .submit", this.signIn);
+      markerModal.on("click", ".submit", this.addMarker);
+      btnSignOut.on("click", this.signOut);
+      addMarkerModalEvents();
+    }, 
     addMap : function(){
       var year = $("#modals .new-map .year").val();
+      if(UTIL.isInvalidYear(year)){
+        alert(Error.invalidYear);
+        return;
+      }
       $.post(url+"map", {year : year}, function(result){
-        if(UTIL.isEmpty(result)){
-          alert("로그인 먼저 하세요");
-          return;          
-        }
         var flag = new FLAG(result.year, wiki);
         flag.changeMap(result.year);
         flag.movePointer(result.year);
@@ -124,10 +143,7 @@ var WIKI = function(){
     },      
     getMap : function(){
       $.get(url+"map", {}, function(result){
-        if(UTIL.isEmpty(result)){
-          return;          
-        }
-        var maps = result.user.maps;
+        var maps = result.maps;
         if(!UTIL.isEmpty(maps)){
           for(var i=0; i<maps.length;i++){
             var flag = new FLAG(maps[i].year, wiki);
@@ -147,8 +163,8 @@ var WIKI = function(){
       var email = $("#modals .sign-in .email").val();
       var password = $("#modals .sign-in .password").val();
       $.get(url+"auth", {email : email, password : password}, function(result){
-        if(UTIL.isEmpty(result)) {
-            alert("패스워드 혹은 아이디가 틀렸습니다.");
+        if(UTIL.isEmpty(result.user)) {
+            alert(Error.invalidSigninInfo);
             return;
         }
         btnSignUp.hide();
@@ -185,18 +201,9 @@ var WIKI = function(){
         markerModal.hide();
       })
     },
-    init : function(){
-      var modals = $("#modals");
-      modals.on("click", ".new-map .submit", this.addMap);
-      modals.on("click", ".sign-up .submit", this.signUp);
-      modals.on("click", ".sign-in .submit", this.signIn);
-      markerModal.on("click", ".submit", this.addMarker);
-      btnSignOut.on("click", this.signOut);
-      addMarkerModalEvents();
-    }, 
     getMarkers : function(year){
       $.get(url+"marker", {year:year}, function(result){
-        var markers = result.maps[0].markers;
+        var markers = result.markers;
         if(UTIL.isEmpty(markers)) return;
 
         markers.forEach(function(marker){
@@ -220,11 +227,9 @@ var FLAG = function(year, wiki){
     this.changeMap(year);
   }.bind(this));
 }
-
 FLAG.prototype.movePointer = function(year){
   $("#timenav .flag-pointer").css('left', year/2);
 }
-
 FLAG.prototype.changeMap = function(year){
   $("#map .year").text("AD."+year);
   $("#map .marker").remove();
