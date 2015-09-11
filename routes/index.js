@@ -2,13 +2,14 @@ var express = require('express');
 var router = express.Router();
 var app = express();
 var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://125.209.195.202:27017/test';
+var url = require("./dbConfig.json").url;
 
 var Error = {
   duplicateEmail : "이미 존재하는 이메일입니다."
 }
 
 router.get('/', function(req, res, next) {
+  console.log(url);
   res.render('index', { title: 'Express',  req: req });
 });
 
