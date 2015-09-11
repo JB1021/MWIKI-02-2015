@@ -5,8 +5,7 @@ var MongoClient = require('mongodb').MongoClient;
 var url = 'mongodb://125.209.195.202:27017/test';
 
 var Error = {
-  auth : "로그인 먼저 하세요.",
-  yearEmpty : "추가할 지도의 연도를 입력하세요."
+  duplicateEmail : "이미 존재하는 이메일입니다."
 }
 
 router.get('/', function(req, res, next) {
@@ -14,13 +13,12 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/auth', function(req, res, next){
-  var email = req.param('email');
-  var password = req.param('password');
+  var params = new PARAMS(req, 'email', 'password');
   MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
-    db.collection('user').find({email: email, password: password}).toArray(function(err, user){
+    db.collection('user').find(params).toArray(function(err, user){
       if(err) res.sendStatus(500);
-      if(user.length !== 0) req.session.auth = user[0];
+      if(!UTIL.isEmpty(user)) req.session.auth = user[0];
       res.json({user:user[0]});
       db.close(); 
     });
@@ -33,13 +31,19 @@ router.delete('/auth', function(req, res){
 })
   
 router.post('/user', function(req, res){
-	var email = req.body.email;
-	var password = req.body.password;
+  var params = new PARAMS(req, 'email', 'password');
 	MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
-    db.collection('user').insert({email: email, password: password}, function(err, inserted){
-      if(err) res.sendStatus(500);
-      res.sendStatus(200);
+    db.collection('user').find({email:params.email}).toArray(function(err, user){
+      console.log(user);
+      if(UTIL.isEmpty(user)) {
+        db.collection('user').insert(params, function(err, inserted){
+        if(err) res.sendStatus(500);
+        res.sendStatus(200);
+        });
+      } else {
+        res.json({error:Error.duplicateEmail});
+      }
       db.close();
     });
   });
@@ -49,7 +53,7 @@ router.get('/map', function(req, res){
   var auth = new AUTH(req);
   MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
-    db.collection('user').find({email: auth.email, password: auth.password}).toArray(function(err, user){
+    db.collection('user').find(auth).toArray(function(err, user){
       if(err) res.sendStatus(500);
       console.log(user[0].maps);
       res.json({maps:user[0].maps});
@@ -59,11 +63,11 @@ router.get('/map', function(req, res){
 }); 
 
 router.post('/map', function(req, res){
-  var year = req.param('year');
   var auth = new AUTH(req);
+  var year = req.param('year');
   MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
-    db.collection('user').update({email: auth.email}, {$push: {maps : {year : year}}}, function(err, updated){
+    db.collection('user').update(auth, {$push: {maps : {year : year}}}, function(err, updated){
       if(err) res.sendStatus(500);
       res.json({year:year});
       db.close(); 
@@ -72,26 +76,23 @@ router.post('/map', function(req, res){
 });
 
 router.post('/marker', function(req, res){
-  var title = req.param('title');
-  var description = req.param('description');
-  var year = req.param('year');
-  var xPos = req.param('xPos');
-  var yPos = req.param('yPos');
   var auth = new AUTH(req);
+  var params = new PARAMS(req, 'title', 'description', 'year', 'xPos', 'yPos');
   MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
-    db.collection('user').update({email: auth.email, 'maps.year' : year}, 
-      {$push: {'maps.$.markers' : {title : title, description: description, xPos:xPos, yPos:yPos}}}, function(err, updated){
+    db.collection('user').update({email: auth.email, 'maps.year' : params.year}, 
+      {$push: {'maps.$.markers' : params}}, function(err, updated){
       if(err) res.sendStatus(500);
-      res.json({year:year, title:title, description:description, xPos:xPos, yPos:yPos});
+      res.json(params);
       db.close(); 
     });
   }); 
 })
 
 router.get('/marker', function(req, res){
-  var year = req.param('year');
   var auth = new AUTH(req);
+  var year = req.param('year');
+
   MongoClient.connect(url, function(err, db){
     if(err) res.sendStatus(500);
     db.collection('user').find({email : auth.email}, { maps: {$elemMatch : {'year': year}}}).toArray(function(err, user){
@@ -101,6 +102,14 @@ router.get('/marker', function(req, res){
     });
   });  
 })
+
+var PARAMS = function(req){
+  var params = {};
+  for(var i=1;i<arguments.length;i++){
+    params[arguments[i]] = req.param([arguments[i]]);
+  }
+  return params;
+}
 
 var AUTH = function(req){
   var email;
@@ -112,6 +121,7 @@ var AUTH = function(req){
     email = req.session.auth.email;
     password = req.session.auth.password;
   }
+  
   return {
     email : email,
     password : password

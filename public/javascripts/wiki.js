@@ -45,7 +45,7 @@ UTIL.isInvalidYear = function(year){
 }
       
 var WIKI = function(){
-  var url = "http://localhost:3000/";
+  var url = "http://localhost:3000";
   var btnSignIn = $('#nav .btn-sign-in');
   var btnSignOut = $('#nav .btn-sign-out');
   var btnSignUp = $('#nav .btn-sign-up');
@@ -133,7 +133,7 @@ var WIKI = function(){
         alert(Error.invalidYear);
         return;
       }
-      $.post(url+"map", {year : year}, function(result){
+      $.post(url+"/map", {year : year}, function(result){
         var flag = new FLAG(result.year, wiki);
         flag.changeMap(result.year);
         flag.movePointer(result.year);
@@ -142,7 +142,7 @@ var WIKI = function(){
       }); 
     },      
     getMap : function(){
-      $.get(url+"map", {}, function(result){
+      $.get(url+"/map", {}, function(result){
         var maps = result.maps;
         if(!UTIL.isEmpty(maps)){
           for(var i=0; i<maps.length;i++){
@@ -155,14 +155,15 @@ var WIKI = function(){
     signUp : function(){
       var email = $("#modals .sign-up .email").val();
       var password = $("#modals .sign-up .password").val();
-      $.post(url+"user", {email : email, password : password}, function(){
+      $.post(url+"/user", {email : email, password : password}, function(result){
+        if(!UTIL.isEmpty(result.error)) alert(result.error);
         $('#modals .mask, .window').hide();
       })      
     },
     signIn : function(){
       var email = $("#modals .sign-in .email").val();
       var password = $("#modals .sign-in .password").val();
-      $.get(url+"auth", {email : email, password : password}, function(result){
+      $.get(url+"/auth", {email : email, password : password}, function(result){
         if(UTIL.isEmpty(result.user)) {
             alert(Error.invalidSigninInfo);
             return;
@@ -170,6 +171,8 @@ var WIKI = function(){
         btnSignUp.hide();
         btnSignIn.hide();
         btnSignOut.show();
+        $("#timenav .flag").remove();
+        $("#map .marker").remove();
         var maps = result.user.maps;
         if(!UTIL.isEmpty(maps)){
           maps.forEach(function(map){
@@ -181,10 +184,12 @@ var WIKI = function(){
       });
     },
     signOut : function(){
-      $.delete(url+"auth", {}, function(){
+      $.delete(url+"/auth", {}, function(){
         btnSignOut.hide();
         btnSignIn.show();
         btnSignUp.show();
+        $("#timenav .flag").remove();
+        $("#map .marker").remove();
       })
     },
     addMarker : function(){
@@ -196,13 +201,13 @@ var WIKI = function(){
       var regex = /[^0-9]/g;
       year = year.replace(regex, '');
 
-      $.post(url+"marker", {title:title, description:description, year:year, xPos:xPos, yPos:yPos}, function(result){
+      $.post(url+"/marker", {title:title, description:description, year:year, xPos:xPos, yPos:yPos}, function(result){
         drawMarker(result.xPos, result.yPos, result.title, result.description);
         markerModal.hide();
       })
     },
     getMarkers : function(year){
-      $.get(url+"marker", {year:year}, function(result){
+      $.get(url+"/marker", {year:year}, function(result){
         var markers = result.markers;
         if(UTIL.isEmpty(markers)) return;
 
