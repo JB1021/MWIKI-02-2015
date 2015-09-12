@@ -36,6 +36,11 @@ var background = svg.append("rect")
     .style("fill", "none")
     .style("stroke-width", "1")
     .style("stroke-dasharray","5,5");
+var markerPointer = container.append("image").attr("xlink:href","../images/marker.png")
+    .attr("width", 10)
+    .attr("height", 10)
+    .attr("class", "marker")
+    .style("display", "none");
 
 var MAP = MAP || {};
 MAP.container = container;
@@ -57,12 +62,10 @@ function mouseClick(d, i) {
     var markerXPos = -(mapLeftTop[0] - mousePos[0])/scale-5;
     var markerYPos = -(mapLeftTop[1] - mousePos[1])/scale-10;
 
-    container.append("image").attr("xlink:href","../images/marker.png")
-    .attr("width", 10)
-    .attr("height", 10)
+    markerPointer
     .attr("x", markerXPos)
     .attr("y", markerYPos)
-    .attr("class", "marker");
+    .style("display", "block");
 
     $("#marker-modal").show();
     $("#marker-modal").css({

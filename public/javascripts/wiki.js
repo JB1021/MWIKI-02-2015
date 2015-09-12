@@ -255,7 +255,35 @@ var FLAG = function(year, wiki){
   }.bind(this));
 }
 FLAG.prototype.movePointer = function(year){
-  $("#timenav .flag-pointer").css('left', year/2);
+  var pointer = $("#timenav .flag-pointer");
+  var oldPos = pointer.position();
+  var start = null;
+  var goal = year/2;
+
+  if(oldPos.left < year/2){
+      window.requestAnimationFrame(moveToPositive);
+  } else {
+      window.requestAnimationFrame(moveToNegative);
+  }
+
+  function moveToPositive(timestamp) {
+    if (!start) start = timestamp;
+    var progress = timestamp - start;
+    var currentPos = parseFloat(oldPos.left) + progress;
+    pointer.css('left', Math.min(currentPos, goal));
+    if (Math.min(currentPos, year/2)===currentPos) {
+      window.requestAnimationFrame(moveToPositive);
+    }
+  }
+  function moveToNegative(timestamp) {
+    if (!start) start = timestamp;
+    var progress = timestamp - start;
+    var currentPos = parseFloat(oldPos.left) - progress;
+    pointer.css('left', Math.max(currentPos, goal));
+    if (Math.max(currentPos, year/2)===currentPos) {
+      window.requestAnimationFrame(moveToNegative);
+    }
+  }
 }
 FLAG.prototype.changeMap = function(year){
   $("#map .year").text("AD."+year);
