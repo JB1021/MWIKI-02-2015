@@ -108,9 +108,23 @@ table {
   	padding:10px;
 	background-color:#ffffff;
 	border: solid grey 2px;
-	font-size: 20px;
+	font-size: 18px;
+	z-index: 9999;
 }
-
+#map .marker-info .title{
+	position: absolute;
+  	width:280px; 
+ 	height:60px;
+ 	left: 20px;
+ 	top: 20px;
+}
+#map .marker-info .description{
+	position: absolute;
+	left: 20px;
+	top: 80px;
+  	width:280px; 
+ 	height:80px;
+}
 #timenav {
 	margin: 0px auto;
 	width: 1050px;

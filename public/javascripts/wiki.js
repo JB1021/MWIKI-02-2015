@@ -307,7 +307,7 @@ Templates.flag = [
 ].join("\n");
 Templates.markerInfo = [
   '<div class="marker-info" style="left: {{left}}px; top: {{top}}px">',
-    '<div class="title">title: {{title}}</div>',
-    '<div class="description">description: {{description}}</div>',
+    '<div class="title">{{title}}</div>',
+    '<div class="description">{{description}}</div>',
   '</div>'
 ].join("\n");
