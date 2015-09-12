@@ -115,8 +115,8 @@ var AUTH = function(req){
   var email;
   var password;
   if(UTIL.isEmpty(req.session.quth)){
-    email = "SHADRED_USER";
-    password = "SHADRED_PASSWORD";
+    email = "SHARED_USER";
+    password = "SHARED_PASSWORD";
   } else {
     email = req.session.auth.email;
     password = req.session.auth.password;

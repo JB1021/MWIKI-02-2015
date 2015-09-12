@@ -227,11 +227,23 @@ table {
 	width: 200px;
 }
 #marker-modal {
-  	width:300px; 
- 	height:180px;
+  	width:350px; 
+ 	height:130px;
   	padding:10px;
 	background-color:#ffffff;
 	display: none;
 	border: solid grey 2px;
 	z-index: 9000;
+}
+#marker-modal .title{
+	height: 35px;
+	width: 260px;
+}
+#marker-modal .description{
+	margin-top: 10px;
+}
+#marker-modal .submit{
+	position: absolute;
+	right: 20px;
+	bottom: 25px;
 }

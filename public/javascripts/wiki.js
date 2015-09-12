@@ -58,7 +58,7 @@ UTIL.isValidPassword = function(password){
 }
 
 var WIKI = function(){
-  var url = "http://localhost:3000";
+  var url = "http://125.209.195.202:3000";
   var btnSignIn = $('#nav .btn-sign-in');
   var btnSignOut = $('#nav .btn-sign-out');
   var btnSignUp = $('#nav .btn-sign-up');
@@ -119,8 +119,8 @@ var WIKI = function(){
   function drawMarker(xPos, yPos, title, description) {
     MAP.container.append("image")
       .attr("xlink:href","../images/marker.png")
-      .attr("width", 10)
-      .attr("height", 10)
+      .attr("width", 15)
+      .attr("height", 15)
       .attr("x", xPos)
       .attr("y", yPos)
       .attr("data-title", title)

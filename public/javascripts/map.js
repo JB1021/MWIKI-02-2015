@@ -34,8 +34,8 @@ var background = svg.append("rect")
     .attr("height", height)
     .style("fill", "none");
 var markerPointer = container.append("image").attr("xlink:href","../images/marker.png")
-    .attr("width", 10)
-    .attr("height", 10)
+    .attr("width", 15)
+    .attr("height", 15)
     .attr("class", "marker")
     .style("display", "none");
 
@@ -62,13 +62,13 @@ function mouseClick(d, i) {
     markerPointer
     .attr("x", markerXPos)
     .attr("y", markerYPos)
-    .style("display", "none");
+    .style("display", "block");
 
     $("#marker-modal").show();
     $("#marker-modal").css({
         "position" : "absolute",
-        "top" : mousePos[1]+140+"px",
-        "left" : mousePos[0]+30+"px"
+        "top" : mousePos[1]+190+"px",
+        "left" : mousePos[0]+20+"px"
     });
     $("#marker-modal").data("markerXPos", markerXPos);
     $("#marker-modal").data("markerYPos", markerYPos);
