@@ -114,7 +114,7 @@ var PARAMS = function(req){
 var AUTH = function(req){
   var email;
   var password;
-  if(UTIL.isEmpty(req.session.quth)){
+  if(UTIL.isEmpty(req.session.auth)){
     email = "SHARED_USER";
     password = "SHARED_PASSWORD";
   } else {
