@@ -213,6 +213,7 @@ var WIKI = function(){
         $("#timenav .flag").remove();
         $("#map .marker").remove();
       })
+      wiki.getMap();
     },
     addMarker : function(){
       var xPos = markerModal.data("markerXPos");
@@ -300,7 +301,7 @@ Templates = {};
 Templates.flag = [
 	'<li class="flag">',
 		'<div class="bar" style="left: {{position}}px;">',
-      '<div class="year">AD.{{year}}</div>',
+      '<div class="year"> AD.{{year}}</div>',
     '</div>',
 	'</li>'
 ].join("\n");

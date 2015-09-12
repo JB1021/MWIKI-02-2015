@@ -68,19 +68,22 @@ table {
 	line-height: 50px;
 	position: absolute;
 	text-align: center;
-	border: dashed grey 2px;
+	top: 100px;
+    cursor: pointer;
+    background-color: black;
+    color: white;
 }
 #nav .btn-new-map{
-	right: 300px;
+	right: 400px;
 }
 #nav .btn-sign-in{
-	right: 100px;
+	right: 140px;
 }
 #nav .btn-sign-up{
-	right: 200px;
+	right: 270px;
 }
 #nav .btn-sign-out{
-	right: 150px;
+	right: 250px;
 }
 #nav .year-input {
 	width: 80px;
@@ -104,7 +107,7 @@ table {
  	height:180px;
   	padding:10px;
 	background-color:#ffffff;
-	border: dashed grey 2px;
+	border: solid grey 2px;
 	font-size: 20px;
 }
 
@@ -112,11 +115,11 @@ table {
 	margin: 0px auto;
 	width: 1050px;
 	height: 100px;
-	border: dashed grey 2px;
+	border: solid grey 2px;
 	position: relative;
 }
 #timenav .bar {
-	width: 3px;
+	width: 2px;
 	height: 100px;
 	background-color: grey;
 	position: absolute;
@@ -129,9 +132,18 @@ table {
 #timenav .year {
 	position: absolute;
 	top: 120px;
-	left: -30px;
-	transform: skewX(10deg);
-	transform: rotate(60deg);
+	left: -20px;
+	font-size: 11px;
+	-webkit-transition-property: font-size;        
+	-webkit-transition-duration: 0.3s;      
+	-webkit-transition-timing-function: ease;
+}
+
+#timenav .year:hover{
+	position: absolute;
+	top: 120px;
+	left: -20px;
+	font-size: 24px;
 }
 
 #modals .mask {
@@ -158,23 +170,68 @@ table {
   	padding:10px;
 	background-color:#ffffff;
 }
+#modals .submit{
+	width: 70px;
+	height: 60px;
+	background-color: black;
+	color: white;
+	display: inline-block;
+	font-size: 10px;
+}
 #modals .close{
-	width: 20px;
-	height: 20px;
+	width: 15px;
+	height: 15px;
 	background-image: url(../images/close-btn.png);
 	background-repeat:no-repeat; 
 	background-position:center;
-	background-size: 20px 20px;
+	background-size: 15px 15px;
 	position: absolute;
 	right: 10px;
 	top: 10px;
+	display: block;
 }
-
+#modals .new-map{
+	width: 320px;
+	height: 80px;
+	position: absolute;
+}
+#modals .new-map .year{
+	height: 60px;
+	width: 200px;
+	display: inline-block;
+}
+#modals .sign-up{
+	width: 290px;
+	height: 160px;
+}
+#modals .sign-up .email{
+	height: 60px;
+	width: 200px;
+	margin-bottom: 10px;
+}
+#modals .sign-up .password{
+	height: 60px;
+	width: 200px;
+}
+#modals .sign-in{
+	width: 290px;
+	height: 160px;
+}
+#modals .sign-in .email{
+	height: 60px;
+	width: 200px;
+	margin-bottom: 10px;
+}
+#modals .sign-in .password{
+	height: 60px;
+	width: 200px;
+}
 #marker-modal {
   	width:300px; 
  	height:180px;
   	padding:10px;
 	background-color:#ffffff;
 	display: none;
-	border: dashed grey 2px;
+	border: solid grey 2px;
+	z-index: 9000;
 }

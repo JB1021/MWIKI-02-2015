@@ -8,15 +8,15 @@
 	<body>
 		<header id="nav">
 			<h1 class="logo">지도위키</h1>
-			<div class="btn-new-map" name="modal" href=".new-map">new map</div>
+			<div class="btn-new-map" name="modal" href=".new-map">New Map</div>
 			<% if (req.session.auth){ %> 
-				<div class="btn-sign-up" name="modal" href=".sign-up" style="display:none">sign up</div>
-        		<div class="btn-sign-in" name="modal" href=".sign-in" style="display:none">sign in</div>
-				<div class="btn-sign-out" style="display:block">sign out</div>
+				<div class="btn-sign-up" name="modal" href=".sign-up" style="display:none">Sign Up</div>
+        		<div class="btn-sign-in" name="modal" href=".sign-in" style="display:none">Sign In</div>
+				<div class="btn-sign-out" style="display:block">Sign Out</div>
         	<% }  else { %>
-				<div class="btn-sign-up" name="modal" href=".sign-up" style="display:block">sign up</div>
-        		<div class="btn-sign-in" name="modal" href=".sign-in" style="display:block">sign in</div>
-				<div class="btn-sign-out" style="display:none">sign out</div>
+				<div class="btn-sign-up" name="modal" href=".sign-up" style="display:block">Sign Up</div>
+        		<div class="btn-sign-in" name="modal" href=".sign-in" style="display:block">Sign In</div>
+				<div class="btn-sign-out" style="display:none">Sign Out</div>
         	<% } %>
 		</header>
 		<section id="map">
@@ -28,27 +28,27 @@
 		</ul>
 		<section id="modals">
 		    <div class="window modal new-map">
-				<input class="year" type="text" placeholder="year"/>
-				<input class="submit" type="submit" placeholder="submit">
+				<input class="year" type="text" placeholder="새로 만들 지도의 연도를 입력하세요."/>
+				<input class="submit" type="submit" value="New Map">
 				<div class="close"></div>       
    			</div>
 		    <div class="window modal sign-up">
-				<input class="email" type="text" placeholder="email"/>
-				<input class="password" type="text" placeholder="password"/>
-				<input class="submit" type="submit" placeholder="submit">       
+				<input class="email" type="text" placeholder="이메일을 입력하세요."/>
+				<input class="password" type="text" placeholder="비밀번호를 입력하세요."/>
+				<input class="submit" type="submit" value="Sign Up">      
 				<div class="close"></div>       
    			</div>
    			<div class="window modal sign-in">
-				<input class="email" type="text" placeholder="email"/>
-				<input class="password" type="text" placeholder="password"/>
-				<input class="submit" type="submit" placeholder="submit">       
+				<input class="email" type="text" placeholder="이메일을 입력하세요."/>
+				<input class="password" type="text" placeholder="비밀번호를 입력하세요."/>
+				<input class="submit" type="submit" value="Sign In">
 				<div class="close"></div>       
    			</div>
    		    <div class="mask"></div>
    		    <div id="marker-modal">
 				<input class="title" type="text" placeholder="title"/>
 				<textarea class="description" cols="45" rows="10"></textarea>
-				<input class="submit" type="submit" placeholder="submit">       
+				<input class="submit" type="submit" value="New Event">     
 				<div class="close"></div>       
 			</div>
 		</section>
