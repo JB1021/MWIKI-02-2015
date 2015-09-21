@@ -21,7 +21,7 @@ var Error = {
   invalidYear : "0~2100 사이의 숫자를 입력하세요.",
   invalidSigninInfo: "패스워드와 아이디를 확인하세요.",
   invalidEmail : "형식에 맞지 않습니다. 이메일을 입력하세요.",
-  invalidPassword : "형식에 맞지 않습니다. 영대/소문자, 숫자 및 특수문자 조합 비밀번호 8자리이상 15자리 이하로 만드세요. 암호화는 하지 않습니다."
+  invalidPassword : "형식에 맞지 않습니다. 영문 대/소문자, 숫자 및 특수문자 조합 비밀번호 8자리이상 15자리 이하로 만드세요. 암호화는 하지 않습니다."
 }
 
 document.addEventListener("DOMContentLoaded", function(e) {
